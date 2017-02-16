@@ -17,7 +17,13 @@
           center: {lat: 37.3230, lng: -122.0322},
           zoom: 14
         });
-      }
+        var cupertino = {lat: 37.3230, lng: -122.0322}; 
+        var marker = new google.maps.Marker({
+          position: cupertino,
+          map: map,
+          title: 'Hello Marker!!!'
+      });
+    }
     </script>
    <!--TODO: Load the JS API ASYNCHRONOUSLY below.-->
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB56jZO1ju-qfea2i9V8sQNXb5jKQ0OGmQ&v3&callback=initMap"

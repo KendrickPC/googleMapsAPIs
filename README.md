@@ -1,5 +1,6 @@
 README.md
 
+###04_Hello_Map_Quiz.html
 Link to Initial Repository: 
 	https://github.com/udacity/ud864
 
@@ -9,4 +10,12 @@ The full reference guide for the JavaScript API is available at:
 04_Hello_Map_Quiz.html
 	Load Script Asynchronously in HTML. Documentation below: 
 		https://developers.google.com/maps/documentation/javascript/tutorial
+
+Google Maps Javascript Marker Documentation
+		https://developers.google.com/maps/documentation/javascript/markers
+
+Pointing Out Maps on Location/Markers
+	https://developers.google.com/maps/documentation/javascript/markers
+		Create a new marker instance with the template code above. 
+
 
