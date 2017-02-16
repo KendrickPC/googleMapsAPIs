@@ -21,9 +21,16 @@
         var marker = new google.maps.Marker({
           position: cupertino,
           map: map,
-          title: 'Hello Marker!!!'
-      });
-    }
+          title: 'Center of the CPT!!!'
+        });
+        var infowindow = new google.maps.InfoWindow({
+          content: 'Welcome to downtown CPT!' + ' Do you want a private tour of the hood?'
+        });
+        // added an EventListener so the infowindow will open
+        marker.addListener('click', function() {
+          infowindow.open(map, marker);
+        });
+      }
     </script>
    <!--TODO: Load the JS API ASYNCHRONOUSLY below.-->
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB56jZO1ju-qfea2i9V8sQNXb5jKQ0OGmQ&v3&callback=initMap"
