@@ -12,27 +12,67 @@
    <div id="map"></div>
     <script>
       var map;
+
+      // Creating a new blank marker array (globally) for the listings.
+      var markers = [];
+
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 37.3230, lng: -122.0322},
-          zoom: 14
+          zoom: 13
         });
-        var cupertino = {lat: 37.3230, lng: -122.0322}; 
+      // These are the real estate listings that will be shown to the user.
+      // Normally we'd have these in a database instead. 
+      var locations = [
+        {title: 'Cupertino High School', location: {lat: 37.3196, lng: -122.0092}},
+        {title: 'Cupertino Civic Center/Cupertino Library', location: {lat: 37.318383, lng: -122.028387}},
+        {title: 'The Mothership of Apple Computers', location: {lat: 37.331695, lng: -122.030091}},
+        {title: 'Apple Campus 2', location: {lat: 37.332447, lng: -122.008688}},
+        {title: 'Vallco Shopping Mall', location: {lat: 37.326779, lng: -122.012897}},
+      ];
+
+      var largeInfowindow = new google.maps.InfoWindow();
+      var bounds = new google.maps.LatLngBounds();
+
+      // The following group uses the location array to create an array of markers on initialize
+      for (var i = 0; i < locations.length; i++) {
+        // Get the position from the location array.
+        var position = locations[i].location;
+        var title = locations[i].title;
+        // Create a marker per location, and put into markers array.
         var marker = new google.maps.Marker({
-          position: cupertino,
           map: map,
-          title: 'Center of the CPT!!!'
+          position: position,
+          title: title,
+          animation: google.maps.Animation.DROP,
+          id: i
         });
-        var infowindow = new google.maps.InfoWindow({
-          content: 'Welcome to downtown CPT!' + ' Do you want a private tour of the hood?'
-        });
-        // added an EventListener so the infowindow will open
+        // Push the marker to our array of markers.
+        markers.push(marker);
+        // Extend the boundaries of the map for each marker
+        bounds.extend(marker.position);
+        // Create an onclick event to open an infiwindow at each marker. 
         marker.addListener('click', function() {
-          infowindow.open(map, marker);
+          populateInfoWindow(this, largeInfowindow);
         });
-      }
+      } 
+      map.fitBounds(bounds);
+    }
+      // This function populates the infowindow when the marker is clicked. We'll only allow one infowindow which will open at the marker that is clicked, and populate based on that marker's position. 
+      function populateInfoWindow(marker, infowindow) {
+        // Check to make sure the infowindow is not already opened in this marker. 
+        if (infowindow.marker != marker) {
+          infowindow.marker = marker;
+          infowindow.setContent('<div>' + marker.title + '</div>');
+          infowindow.open(map, marker);
+          // Make sure the marker property is cleared if the infowindow is closed.
+          infowindow.addListener('closeclick',function(){
+          infowindow.setMarker(null);
+          });
+        }
+      }   
     </script>
-   <!--TODO: Load the JS API ASYNCHRONOUSLY below.-->
+   <!--Loaded the Javascript asynchronously below.-->
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB56jZO1ju-qfea2i9V8sQNXb5jKQ0OGmQ&v3&callback=initMap"
     ></script>
  </body>
