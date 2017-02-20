@@ -96,6 +96,9 @@
       // Creating a new blank marker array (globally) for the listings.
       var markers = [];
 
+      // This global polygon variable is to ensure only ONE polygon is rendered.
+      var polygon = null;
+
       function initMap() {
       // Creating a styles array to style map
 
@@ -237,8 +240,29 @@
       document.getElementById('toggle-drawing').addEventListener('click', function() {
         toggleDrawing(drawingManager);
     });
-
+     // Add an event listener so that the polygon is captured,  call the
+      // searchWithinPolygon function. This will show the markers in the polygon,
+      // and hide any outside of it.
+      drawingManager.addListener('overlaycomplete', function(event) {
+          // Limiting the user to one polygon at a time.
+          if (polygon) {
+            polygon.setMap(null);
+            hideListings(markers);
+          }
+          // Switch the drawing mode to normal after the polygon is drawn.
+          drawingManager.setDrawingMode(null);
+          // Capture the overlay drawn and assign it to our polygon variable.
+          polygon = event.overlay;
+          // Make the polygon editable so we set it to true.
+          polygon.setEditable(true);
+          // Calling the "searching within polygon" function.
+          searchWithinPolygon();
+          // Allows the search to be redone if the polygone is edited. More event listeners are added on the polygone itself. It checks for changes and re-executes the search.
+          polygon.getPath().addListener('set_at', searchWithinPolygon);
+          polygon.getPath().addListener('insert_at', searchWithinPolygon);
+        });
 }
+
       // This function populates the infowindow when the marker is clicked. We'll only allow one infowindow which will open at the marker that is clicked, and populate based on that marker's position. 
       function populateInfoWindow(marker, infowindow) {
         // Check to make sure the infowindow is not already opened on this marker.
@@ -323,6 +347,16 @@
         }
       }
 
+      // This function uses the polygon, drawn by the user (and the markers position), and uses more geometry library to check to see if the polygon contains the marker.
+      function searchWithinPolygon() {
+        for (var i = 0; i < markers.length; i++) {
+          if (google.maps.geometry.poly.containsLocation(markers[i].position, polygon)) {
+            markers[i].setMap(map);
+          } else {
+            markers[i].setMap(null);
+          }
+        }
+      }
     </script>
    <!--Loaded the Javascript asynchronously below.-->
    <!-- Loaded the Google Maps Geometry Library -->
