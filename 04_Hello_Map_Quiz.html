@@ -74,6 +74,7 @@
 
       function initMap() {
       // Creating a styles array to style map
+
         var styles = [
           {
             featureType: 'water',
@@ -208,6 +209,12 @@
           infowindow.addListener('closeclick',function(){
           infowindow.setMarker(null);
           });
+          // Create a new streetViewService object
+          var streetViewService = new google.maps.streetViewService();
+
+
+
+          
         }
       }   
 

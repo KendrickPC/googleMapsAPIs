@@ -20,3 +20,13 @@ Pointing Out Maps on Location/Markers
 Display Information About the Marker/Infowindows
 	https://developers.google.com/maps/documentation/javascript/infowindows
 
+Custom Map Styles:
+	https://developers.google.com/maps/documentation/javascript/styling#creating_a_styledmaptype
+
+	https://developers.google.com/maps/documentation/javascript/reference#MapTypeStyleFeatureType
+
+	Snazzy Maps:
+		https://snazzymaps.com/
+
+Static Maps and Street View: 
+	
