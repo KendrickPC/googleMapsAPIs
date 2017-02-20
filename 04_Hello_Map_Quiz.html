@@ -3,7 +3,7 @@
  <head>
   <link href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB3kKP/fn5eAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQ0dMFAAAAAAAAAAAAAAAAJmnsv8AAAAAeZes/0hqgf8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADH1t//AAAAAAAAAAC3xtL/AAAAAAAAAAB7i5v/rsHO/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAxtff/wAAAAAAAAAArbbC/1Nic/8vOlX/prbC/6y4xP9ld37/k6Kr/6CwuPsAAAAAAAAAAAAAAAAAAAAAAAAAAMbT3P8AAAAAAAAAALnDy/9VZXj/aXSH/7zDyv+qtb7/ur3BngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACru8v/AAAAAJepuv+wvMT/hZSd/4KTnv+suMP/qrC4/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwczV/7zL1v/M1d7/o7C5/4GQnf+ksbr/o7C5/7C1vP8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALnE0v/V3OX/y9La/56nr/8LCwj/nqet/xEOCv8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANzh5v/N1Nr/zdHY/7nDz/+OmJ7/EA8K/52jqv8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAzNPa/8vV3P94hIr/eYWJ/2txcP+2wMb/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANTd5P+bp7P/Y3iB/3yMkv+YoKX/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB+ipP/ZISU/2h7hP+Ij5T/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASFJc/zMuI/8/ZYH/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAZ5rC/TZuqv9KdKP/JUFe/1hfaFwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALDpM/xwuQ/8hQWf/ZaPP/w4TEv8PFyH/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGNrdzs8YpP/ZqDJxVNngN1CY4P/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/f8AAP6fAAD2zwAA9gEAAPYHAAD0DwAA8A8AAPAfAADgPwAA8D8AAPB/AADw/wAA8f8AAOH/AADA/wAA4f8AAA==" rel="icon" type="image/x-icon" />
  <!-- styles put here, but you can include a CSS file and reference it instead! -->
-   <style type="text/css">
+    <style>
       html,
       body {
         font-family: Arial, sans-serif;
@@ -31,7 +31,13 @@
       #hide-listings,
       #show-listings {
         width: 48%;
-        border: solid;
+      }
+
+      hr {
+        background: #D0D7D9;
+        height: 1px;
+        margin: 20px 0 20px 0;
+        border: none;
       }
 
       #map {
@@ -52,6 +58,15 @@
         text-align: left;
         width: 340px;
       }
+
+      #pano {
+        width: 200px;
+        height: 200px;
+      }
+
+      .text {
+        font-size: 12px;
+      }
     </style>
  </head>
  <body>
@@ -65,7 +80,6 @@
   </div>  
     <div id="map"></div>
   </div>
-
     <script>
       var map;
 
@@ -200,23 +214,46 @@
     }
       // This function populates the infowindow when the marker is clicked. We'll only allow one infowindow which will open at the marker that is clicked, and populate based on that marker's position. 
       function populateInfoWindow(marker, infowindow) {
-        // Check to make sure the infowindow is not already opened in this marker. 
+        // Check to make sure the infowindow is not already opened on this marker.
         if (infowindow.marker != marker) {
+          // Clear the infowindow content to give the streetview time to load.
+          infowindow.setContent('');
           infowindow.marker = marker;
-          infowindow.setContent('<div>' + marker.title + '</div>' + '<div>' + marker.position + '</div>');
-          infowindow.open(map, marker);
           // Make sure the marker property is cleared if the infowindow is closed.
-          infowindow.addListener('closeclick',function(){
-          infowindow.setMarker(null);
+          infowindow.addListener('closeclick', function() {
+            infowindow.marker = null;
           });
-          // Create a new streetViewService object
-          var streetViewService = new google.maps.streetViewService();
-
-
-
-          
+          var streetViewService = new google.maps.StreetViewService();
+          var radius = 50;
+          // In case the status is OK, which means the pano was found, compute the
+          // position of the streetview image, then calculate the heading, then get a
+          function getStreetView(data, status) {
+            if (status == google.maps.StreetViewStatus.OK) {
+              var nearStreetViewLocation = data.location.latLng;
+              var heading = google.maps.geometry.spherical.computeHeading(
+                nearStreetViewLocation, marker.position);
+                infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
+                var panoramaOptions = {
+                  position: nearStreetViewLocation,
+                  pov: {
+                    heading: heading,
+                    pitch: 30
+                  }
+                };
+              var panorama = new google.maps.StreetViewPanorama(
+                document.getElementById('pano'), panoramaOptions);
+            } else {
+              infowindow.setContent('<div>' + marker.title + '</div>' +
+                '<div>No Street View Found</div>');
+            }
+          }
+          // Use streetview service to get the closest streetview image within
+          // 50 meters of the markers position
+          streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
+          // Open the infowindow on the correct marker.
+          infowindow.open(map, marker);
         }
-      }   
+      } 
 
       // This function will loop through the markers array and display them all
       function showListings() {
@@ -248,7 +285,8 @@
 
     </script>
    <!--Loaded the Javascript asynchronously below.-->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB56jZO1ju-qfea2i9V8sQNXb5jKQ0OGmQ&v=3&callback=initMap">
+   <!-- Loaded the Google Maps Geometry Library -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?&key=AIzaSyB56jZO1ju-qfea2i9V8sQNXb5jKQ0OGmQ&libraries=geometry&v=3&callback=initMap">
     </script>
  </body>
 </html>

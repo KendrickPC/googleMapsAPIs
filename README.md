@@ -29,4 +29,8 @@ Custom Map Styles:
 		https://snazzymaps.com/
 
 Static Maps and Street View: 
-	
+	Same Origin Policy: Error 403: 
+		Type in browser console the following code:
+			Access-Control-Allow-Origin: *
+
+
