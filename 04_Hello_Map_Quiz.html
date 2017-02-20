@@ -67,6 +67,12 @@
       .text {
         font-size: 12px;
       }
+
+      #toggle-drawing {
+        width: 27%;
+        position: relative;
+        margin-left: 10px;
+      }
     </style>
  </head>
  <body>
@@ -76,6 +82,10 @@
     <div>
       <input id="show-listings" type="button" value="Show Listings">
       <input id="hide-listings" type="button" value="Hide Listings">
+      <hr>
+      <!-- create a button to toggle the drawing tools on and off -->
+      <span class="text"> Draw a shape to search within it for homes!</span>
+      <input id="toggle-drawing"  type="button" value="Drawing Tools">
     </div>
   </div>  
     <div id="map"></div>
@@ -166,14 +176,26 @@
       // These are the real estate listings that will be shown to the user.
       // Normally we'd have these in a database instead 
       var locations = [
-        {title: 'Cupertino High School', location: {lat: 37.3196, lng: -122.0092}},
+        {title: 'Cupertino High School', location: {lat: 37.319433, lng: -122.009124}},
         {title: 'Cupertino Civic Center/Cupertino Library', location: {lat: 37.318163, lng: -122.028387}},
         {title: 'The Mothership of Apple Computers', location: {lat: 37.331695, lng: -122.030091}},
-        {title: 'Apple Campus 2/Spaceship Campus', location: {lat: 37.335450, lng: -122.008688}},
+        {title: 'Apple Campus 2/Spaceship Campus', location: {lat: 37.332446, lng: -122.008913}},
         {title: 'Vallco Shopping Mall', location: {lat: 37.326779, lng: -122.012897}},
       ];
 
       var largeInfowindow = new google.maps.InfoWindow();
+
+        // Initialize the drawing manager.
+        var drawingManager = new google.maps.drawing.DrawingManager({
+          drawingMode: google.maps.drawing.OverlayType.POLYGON,
+          drawingControl: true,
+          drawingControlOptions: {
+            position: google.maps.ControlPosition.TOP_LEFT,
+            drawingModes: [
+              google.maps.drawing.OverlayType.POLYGON
+            ]
+          }
+        });
 
       // Styles the markers - this is my listing marker icon. 
       var defaultIcon = makeMarkerIcon('0091ff');
@@ -211,7 +233,12 @@
 
       document.getElementById('show-listings').addEventListener('click', showListings);
       document.getElementById('hide-listings').addEventListener('click', hideListings);
-    }
+
+      document.getElementById('toggle-drawing').addEventListener('click', function() {
+        toggleDrawing(drawingManager);
+    });
+
+}
       // This function populates the infowindow when the marker is clicked. We'll only allow one infowindow which will open at the marker that is clicked, and populate based on that marker's position. 
       function populateInfoWindow(marker, infowindow) {
         // Check to make sure the infowindow is not already opened on this marker.
@@ -283,26 +310,23 @@
         return markerImage;
       }
 
+      // This shows and hides (respectively) the drawing options.
+      function toggleDrawing(drawingManager) {
+        if (drawingManager.map) {
+          drawingManager.setMap(null);
+          // In case the user drew anything, get rid of the polygon
+          if (polygon !== null) {
+            polygon.setMap(null);
+          }
+        } else {
+          drawingManager.setMap(map);
+        }
+      }
+
     </script>
    <!--Loaded the Javascript asynchronously below.-->
    <!-- Loaded the Google Maps Geometry Library -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?&key=AIzaSyB56jZO1ju-qfea2i9V8sQNXb5jKQ0OGmQ&libraries=geometry&v=3&callback=initMap">
+    <script async defer src="https://maps.googleapis.com/maps/api/js?&key=AIzaSyB56jZO1ju-qfea2i9V8sQNXb5jKQ0OGmQ&libraries=drawing,geometry&v=3&callback=initMap">
     </script>
  </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

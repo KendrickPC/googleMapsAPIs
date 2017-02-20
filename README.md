@@ -30,7 +30,27 @@ Custom Map Styles:
 
 Static Maps and Street View: 
 	Same Origin Policy: Error 403: 
-		Type in browser console the following code:
-			Access-Control-Allow-Origin: *
+		https://stackoverflow.com/questions/9310112/why-am-i-seeing-an-origin-is-not-allowed-by-access-control-allow-origin-error/9327508#9327508
+			Type in browser console the following code:
+				Access-Control-Allow-Origin: *
+
+Google Maps Link: 
+	https://developers.google.com/maps/documentation/static-maps/intro
+
+	https://developers.google.com/maps/documentation/streetview/
+
+Loading the Drawing Library:
+	https://developers.google.com/maps/documentation/javascript/visualization
+
+
+
+
+
+
+
+
+
+
+
 
 
