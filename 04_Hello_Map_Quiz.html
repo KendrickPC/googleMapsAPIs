@@ -256,7 +256,15 @@
 
       document.getElementById('toggle-drawing').addEventListener('click', function() {
         toggleDrawing(drawingManager);
-    });
+      });
+
+      // Begin add an Zoom-to-Area addEventListener
+      document.getElementById('zoom-to-area').addEventListener('click', function()  {
+        zoomToArea();
+      });
+      // End Zoom-to-Area addEventListener
+
+
      // Add an event listener so that the polygon is captured,  call the
       // searchWithinPolygon function. This will show the markers in the polygon,
       // and hide any outside of it.
