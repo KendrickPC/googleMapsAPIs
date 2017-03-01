@@ -44,11 +44,11 @@ Loading the Drawing Library:
 
 Ended: Understanding API Services: 
 
+***** PROBLEM: Quiz: Interpreting Geocoding Responses
+https://developers.google.com/maps/documentation/javascript/geocoding#GeocodingResults
+*****
 
-
-
-
-
+<!-- Ended: fromMeToYou.html QUIZ -->
 
 
 
